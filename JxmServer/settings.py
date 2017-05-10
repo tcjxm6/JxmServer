@@ -25,7 +25,7 @@ SECRET_KEY = '@-he^d6!5i(nay$p@&j@hbs)njaur%8*u*&b#opm=!@qg_$$%8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["35.185.134.177","tcjxm6.xyz"]
+ALLOWED_HOSTS = ["35.185.134.177","tcjxm6.xyz",'127.0.0.1']
 
 
 # Application definition
@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'gunicorn',
+    
+    'article',
+
 ]
 
 MIDDLEWARE = [
@@ -50,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-ROOT_URLCONF = 'JxmServer.urls'
+ROOT_URLCONF = 'article.urls'
 
 TEMPLATES = [
     {
