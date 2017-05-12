@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CELERYBEAT_SCHEDULE = {
     'add-every-3-seconds': {
-        'task': 'article.tasks.test_celery',
+        'task': 'article.tasks.HouseSpider',
         # 'schedule': crontab(minute=u'40', hour=u'17',),
         'schedule': timedelta(seconds=3),
         'args': (16, 16)
