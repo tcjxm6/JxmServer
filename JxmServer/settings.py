@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
-
+from __future__ import absolute_import
 import os
+import djcelery
+from celery.schedules import crontab
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,6 +33,10 @@ ALLOWED_HOSTS = ["35.185.134.177","tcjxm6.xyz",'127.0.0.1']
 
 # Application definition
 
+
+djcelery.setup_loader()
+# BROKER_URL = 'django://'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'article',
+    'djcelery',
+    'kombu.transport.django',
 
 ]
 
@@ -102,13 +111,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CELERYBEAT_SCHEDULE = {
+    'add-every-3-seconds': {
+        'task': 'article.tasks.test_celery',
+        # 'schedule': crontab(minute=u'40', hour=u'17',),
+        'schedule': timedelta(seconds=3),
+        'args': (16, 16)
+    },
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
