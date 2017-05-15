@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.hello),
     url(r'^a/', views.allPerson),
+    url(r'^saveRealEstate/', views.saveRealEstate),
 ]

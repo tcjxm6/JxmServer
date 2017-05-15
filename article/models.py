@@ -16,3 +16,5 @@ class Person(models.Model):
 	num = models.CharField(max_length=20)
 
 	objects = PersonManager()
+
+

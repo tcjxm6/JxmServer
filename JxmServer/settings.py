@@ -88,9 +88,13 @@ WSGI_APPLICATION = 'JxmServer.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(os.path.join(BASE_DIR,os.path.pardir), 'db.sqlite3'),
     }
 }
+
+
+
 
 
 # Password validation
@@ -115,8 +119,15 @@ CELERYBEAT_SCHEDULE = {
     'add-every-3-seconds': {
         'task': 'article.tasks.HouseSpider',
         # 'schedule': crontab(minute=u'40', hour=u'17',),
-        'schedule': timedelta(seconds=3),
+        'schedule': timedelta(seconds=10),
         'args': (16, 16)
+    },
+
+    'timing': {
+        'task': 'app1.tasks.test_multiply',
+        'schedule': crontab(minute=u'0', hour=u'0',),
+        # 'schedule': timedelta(seconds=3),
+        'args': (2, 3)
     },
 }
 
