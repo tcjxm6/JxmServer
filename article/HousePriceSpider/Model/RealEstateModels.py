@@ -16,7 +16,8 @@ class RealEstateManager(models.Manager):
 					house_type,
 					house_rent,
 					house_href,
-					source):
+					source,
+					date):
 		realEstate = self.create(province_name=province_name,
 							city_name=city_name,
 							regionalism_name=regionalism_name,
@@ -25,13 +26,14 @@ class RealEstateManager(models.Manager):
 							house_type=house_type,
 							house_rent=house_rent,
 							house_href=house_href,
-							source=source)
-		
+							source=source,
+							date=date)
 
 		return realEstate
 
 
 class RealEstate(models.Model):
+
 	#//省
 	province_name = models.CharField(max_length=20)
 	#//市
@@ -53,7 +55,7 @@ class RealEstate(models.Model):
 	#//来源
 	source = models.CharField(max_length=20)
 	#//保存日期
-	date = models.DateTimeField(auto_now=True)
+	date = models.DateTimeField(null=True,blank=True)
 
 
 	objects = RealEstateManager()

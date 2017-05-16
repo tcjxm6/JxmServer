@@ -2,8 +2,8 @@
 from bs4 import BeautifulSoup
 import requests
 from .Model import RealEstateModels 
-
-
+import datetime
+from django.utils import timezone
 Top_100 = 'Top100'
 
 
@@ -45,52 +45,106 @@ def analyzingTop100(html):
 	liArr = clearfix.find_all('li')
 
 	for child in liArr:
-
-		province_name = '广东省'
-		city_name = '深圳市'
-		regionalism_name = '未知区'
-		address = '未知'
-		house_name = '未知'
-		avg_price = 0.0
-		house_type = '未知'
-		house_rent = '未知'
-		house_href = ''
-		source = 'www.fang.com'
-
-		houses = child.find_all(class_ = 'floatl')
-		house = None
-		if len(houses) > 0:
-			house = houses[0]
-			pass
-		houseName = house.string
-		house_name = navToString(houseName)
-		if len(house_name) > 0:
-			
-			prices = child.find_all(class_ = 'price')
-			if len(prices) > 0:
-				priceVal = prices[0].span.string
-				unicode_string = unicode(priceVal)
-				priceStr = unicode_string.encode("utf-8")
-				pass
-			
-
-			# safe_float(priceStr)
-			if priceStr.isdigit():
-				avg_price = float(priceStr)
-				pass
-			
-
-			archiveData(province_name, city_name, regionalism_name, address, house_name, avg_price, house_type, house_rent, house_href, source)
-			des = unicode(houseName).encode("utf-8")
-			print '保存成功:' + des
-
-			pass
-		
-		else:
-			print house_name + '-保存失败'
+		#解析每个节点
+		analyzingTop100LiNode(child)
 		pass
 	pass
 
+
+def analyzingTop100LiNode(child):
+	province_name = '广东省'
+	city_name = '深圳市'
+	regionalism_name = '未知区'
+	address = '未知'
+	house_name = '未知'
+	avg_price = 0.0
+	house_type = '未知'
+	house_rent = '未知'
+	house_href = ''
+	source = 'www.fang.com'
+
+	#获取楼盘名称
+	houses = child.find_all(class_ = 'floatl')
+	house = None
+	if len(houses) > 0:
+		house = houses[0]
+		pass
+	houseName = house.string
+	house_name = navToString(houseName)
+
+	#设置详情链接
+	houseHref = house.get('href')
+	if len(houseHref) > 0 and isinstance(houseHref,str):
+		house_href = houseHref
+		pass
+
+	#设置区
+	houseRegionalisms = child.find_all(class_ = 'floatr') 
+	houseRegionalism = None
+	if len(houseRegionalisms) > 0:
+		houseRegionalism = houseRegionalisms[0]
+		pass
+	regionalismName = houseRegionalism.string
+	regionalism_name = navToString(regionalismName)
+	regionalism_name = regionalism_name.replace('[', '')
+	regionalism_name = regionalism_name.replace(']', '')
+
+	#设置地址
+	addressNodes = child.find_all(class_ = 'address') 
+	if len(addressNodes) > 0:
+		addressNode = addressNodes[0]
+		pass
+	addressStr = addressNode.a.string
+	address = navToString(addressStr)
+	subEndIndex = address.find(']')
+	if subEndIndex != -1:
+		address = address[subEndIndex+1:]
+		pass
+
+	#设置住宅类型
+	houseTypeNodes =  child.find_all(class_ = 'tag clearfix')
+	if len(houseTypeNodes) > 0:
+		houseTypes = houseTypeNodes[0]
+		houseTypes = houseTypes.find_all('span')
+
+		for x in xrange(0,len(houseTypes)):
+			houseTypeNode = houseTypes[x]
+			val = navToString(houseTypeNode.string)
+			if val == '普通住宅':
+				house_type = '住宅'
+				pass
+			elif val == '商业':
+				house_type = '商业用房'
+				pass
+			pass
+		pass
+	
+	if len(house_name) > 0:
+		#获取楼盘价格
+		prices = child.find_all(class_ = 'price')
+		if len(prices) > 0:
+			priceVal = prices[0].span.string
+			unicode_string = unicode(priceVal)
+			priceStr = unicode_string.encode("utf-8")
+			pass
+		
+
+		# safe_float(priceStr)
+		if priceStr.isdigit():
+			avg_price = float(priceStr)
+			pass
+		
+
+		archiveData(province_name, city_name, regionalism_name, address, house_name, avg_price, house_type, house_rent, house_href, source)
+		des = unicode(houseName).encode("utf-8")
+		print '保存成功:' + des
+
+		pass
+	
+	else:
+		print house_name + '-保存失败'
+	
+	pass
 
 
 def navToString(navVal):
@@ -107,7 +161,12 @@ def archiveData(province_name,
 				house_href,
 				source,
 				):
-	model = RealEstateModels.RealEstate.objects.create_realEstate(province_name, city_name, regionalism_name, address, house_name, avg_price, house_type, house_rent, house_href, source)
+	# date = timezone.now();
+	# django.util.timezone.now()
+	date = datetime.datetime.now();
+	model = RealEstateModels.RealEstate.objects.create_realEstate(province_name, city_name, regionalism_name, address, house_name, avg_price, house_type, house_rent, house_href, source,date)
+
+	print model.date
 	model.save()
 	pass
 

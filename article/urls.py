@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^$', views.hello),
     url(r'^a/', views.allPerson),
     url(r'^saveRealEstate/', views.saveRealEstate),
+    url(r'^queryTop100/', views.queryTop100),
 ]
