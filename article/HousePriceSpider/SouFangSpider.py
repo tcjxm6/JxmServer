@@ -9,8 +9,30 @@ Top_100 = 'Top100'
 
 def getHouseInfo():
 
+	#深圳，长沙
+	cityArr = ['cs','sz','gz','dg','huizhou']
+	for x in xrange(0,len(cityArr)):
+		url = 'http://newhouse.'+cityArr[x]+'.fang.com/house/web/newhouse_sumall.php?page='
+		for x in xrange(1,10):
+
+			url = url + str(x)
+			response = requests.get(url)
+			response.encoding = 'gb18030'
+			html = response.text
+			if response.status_code:
+				analyzingResponse(html,Top_100)
+				pass
+			pass
+		pass
+	
+
+	pass
+
+def houseSpider(url):
+
 	for x in xrange(1,10):
-		url = 'http://newhouse.sz.fang.com/house/web/newhouse_sumall.php?page=' + str(x)
+
+		url = url + str(x)
 		response = requests.get(url)
 		response.encoding = 'gb18030'
 		html = response.text
@@ -18,12 +40,8 @@ def getHouseInfo():
 			analyzingResponse(html,Top_100)
 			pass
 		pass
-	
-	
 
 	pass
-
-	
 
 
 	 
@@ -166,7 +184,6 @@ def archiveData(province_name,
 	date = datetime.datetime.now();
 	model = RealEstateModels.RealEstate.objects.create_realEstate(province_name, city_name, regionalism_name, address, house_name, avg_price, house_type, house_rent, house_href, source,date)
 
-	print model.date
 	model.save()
 	pass
 

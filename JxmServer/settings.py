@@ -119,13 +119,13 @@ CELERYBEAT_SCHEDULE = {
     # 'add-every-3-seconds': {
     #     'task': 'article.tasks.HouseSpider',
     #     # 'schedule': crontab(minute=u'40', hour=u'17',),
-    #     'schedule': timedelta(seconds=60),
+    #     'schedule': timedelta(seconds=10),
     #     'args': (16, 16)
     # },
 
     'timing': {
         'task': 'article.tasks.HouseSpider',
-        'schedule': crontab(minute=u'28', hour=u'0',),
+        'schedule': crontab(minute=u'1', hour=u'0',),
         # 'schedule': timedelta(seconds=3),
         'args': (2, 3)
     },
