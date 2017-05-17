@@ -11,22 +11,30 @@ def getHouseInfo():
 
 	#深圳，长沙
 	cityArr = ['cs','sz','gz','dg','huizhou']
-	for x in xrange(0,len(cityArr)):
-		url = 'http://newhouse.'+cityArr[x]+'.fang.com/house/web/newhouse_sumall.php?page='
+	cityName = ['长沙市','深圳市','广州市','东莞市','惠州市']
+	for y in xrange(0,len(cityArr)):
+
+		url = 'http://newhouse.'+cityArr[y]+'.fang.com/house/web/newhouse_sumall.php?page='
+		
 		for x in xrange(1,10):
 
-			url = url + str(x)
-			response = requests.get(url)
+			url2 = url + str(x)
+			print '开始爬' + cityArr[y] + ':' + url2
+			response = requests.get(url2)
 			response.encoding = 'gb18030'
 			html = response.text
 			if response.status_code:
-				analyzingResponse(html,Top_100)
+				analyzingResponse(html,Top_100,cityName[y])
+				pass
+			else :
+				print '获取数据失败:' + url2
 				pass
 			pass
 		pass
-	
+		print '爬' + cityName[y] + '结束'
 
 	pass
+	print '爬虫结束'
 
 def houseSpider(url):
 
@@ -45,16 +53,16 @@ def houseSpider(url):
 
 
 	 
-def analyzingResponse(html,type):
+def analyzingResponse(html,type,cityName):
 
 	if type == Top_100:
-		analyzingTop100(html)
+		analyzingTop100(html,cityName)
 		pass
 	
 
 	pass
 
-def analyzingTop100(html):
+def analyzingTop100(html,cityName):
 
 	soup = BeautifulSoup(html, "lxml")
 	listAreaArr = soup.find_all(class_="listArea")
@@ -64,14 +72,14 @@ def analyzingTop100(html):
 
 	for child in liArr:
 		#解析每个节点
-		analyzingTop100LiNode(child)
+		analyzingTop100LiNode(child,cityName)
 		pass
 	pass
 
 
-def analyzingTop100LiNode(child):
+def analyzingTop100LiNode(child,cityName):
 	province_name = '广东省'
-	city_name = '深圳市'
+	city_name = cityName
 	regionalism_name = '未知区'
 	address = '未知'
 	house_name = '未知'
