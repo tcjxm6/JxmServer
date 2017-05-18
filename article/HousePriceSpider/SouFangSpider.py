@@ -10,8 +10,8 @@ Top_100 = 'Top100'
 def getHouseInfo():
 
 	#深圳，长沙
-	cityArr = ['cs','sz','gz','dg','huizhou']
-	cityName = ['长沙市','深圳市','广州市','东莞市','惠州市']
+	cityArr = ['cs','sz','gz','dg','huizhou','gy']
+	cityName = ['长沙市','深圳市','广州市','东莞市','惠州市','贵阳市']
 	for y in xrange(0,len(cityArr)):
 
 		url = 'http://newhouse.'+cityArr[y]+'.fang.com/house/web/newhouse_sumall.php?page='
