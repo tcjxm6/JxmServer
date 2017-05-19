@@ -89,61 +89,93 @@ def queryTop100(request):
 		dic['msg'] = '解析JSON失败'
 		return HttpResponse(json.dumps(dic),content_type='application/json')
 		pass
-# province_name = models.CharField(max_length=20)
-# 	#//市
-# 	city_name = models.CharField(max_length=20)
-# 	#//区
-# 	regionalism_name = models.CharField(max_length=20)
-# 	#//地址
-# 	address = models.CharField(max_length=50)
-# 	#//楼盘名称
-# 	house_name = models.CharField(max_length=20)
-# 	#//平均售价
-# 	avg_price = models.DecimalField(max_digits=10,decimal_places=2)
-# 	#//房产类型  普通住宅，商业
-# 	house_type = models.CharField(max_length=20)
-# 	#//可售平方范围
-# 	house_rent = models.CharField(max_length=20)
-# 	#//链接
-# 	house_href = models.CharField(max_length=20)
-# 	#//来源
-# 	source = models.CharField(max_length=20)
-# 	#//保存日期
-# 	date 
+
 
 	print jsDic
-	beginTimeStr = jsDic['beginTime']
-	endTimeStr = jsDic['endTime']
-	size = jsDic['size']
-	page = jsDic['page']
+
+	try:
+		beginTimeStr = jsDic['beginTime']
+		endTimeStr = jsDic['endTime']
+		size = jsDic['size']
+		page = jsDic['page']
+		
+		pass
+	except Exception as e:
+		print Exception
+		dic['success'] = False
+		dic['msg'] = '提交参数缺失'
+		return HttpResponse(json.dumps(dic),content_type='application/json')
+
+	city = jsDic.get('city',None)
+
+
+	sortBy = dic.get('sort','regionalism_name')
+
+
+
+	if sortBy == 'price':
+		sortBy = 'avg_price'
+		pass
+	else :
+		sortBy = 'regionalism_name'
+		pass
+		
+
+	
 	beginTime = datetime.datetime.strptime(beginTimeStr,"%Y-%m-%d %H:%M:%S") 
 	endTime = datetime.datetime.strptime(endTimeStr,"%Y-%m-%d %H:%M:%S") 
 
-	models = RealEstateModels.RealEstate.objects.filter(date__range=(beginTime, endTime))[(page-1)*size : size * page]
+	models = models = RealEstateModels.RealEstate.objects.filter(date__range=(beginTime, endTime)).order_by('regionalism_name')
+	if city != None:
+		models = models.filter(city_name=city).order_by('regionalism_name')
+		pass
+	
 
-	arr = []
+#[(page-1)*size : size * page]
+	houseNameArr = []
+	dataDic = {}
 
 	for x in xrange(0,len(models)):
 		model = models[x]
-		modelDic = {}
-		modelDic['province_name'] = model.province_name
-		modelDic['city_name'] = model.city_name
-		modelDic['regionalism_name'] = model.regionalism_name
-		modelDic['address'] = model.address
-		modelDic['house_name'] = model.house_name
-		modelDic['avg_price'] = float(model.avg_price)
-		modelDic['house_type'] = model.house_type
-		modelDic['house_rent'] = model.house_rent
-		modelDic['house_href'] = model.house_href
-		modelDic['source'] = model.source
-		modelDic['date'] = model.date.strftime('%Y-%m-%d %H:%M:%S');
-		arr.append(modelDic)
-		print type(model.date)
+
+
+		modelDic = dataDic.get(model.house_name,{})
+
+		if modelDic :
+			pass
+		else :
+			modelDic['province_name'] = model.province_name
+			modelDic['city_name'] = model.city_name
+			modelDic['regionalism_name'] = model.regionalism_name
+			modelDic['address'] = model.address
+			modelDic['house_name'] = model.house_name
+			modelDic['house_type'] = model.house_type
+			modelDic['house_rent'] = model.house_rent
+			modelDic['house_href'] = model.house_href
+			modelDic['source'] = model.source
+
+			houseNameArr.append(model.house_name)
+			pass
+		
+		prices = modelDic.get('avg_prices',{})
+		prices[model.date.strftime('%Y-%m-%d %H:%M:%S')] = float(model.avg_price)
+		modelDic['avg_prices'] = prices
+		# modelDic['avg_price'] = float(model.avg_price)
+		# modelDic['date'] = model.date.strftime('%Y-%m-%d %H:%M:%S');
+		
+		dataDic[model.house_name] = modelDic
 		pass
 
+	responseData = []
+	for x in xrange((page-1)*size,size * page):
+		if x >= len(houseNameArr) or x < 0:
+			break
+			pass
+		responseData.append(dataDic[houseNameArr[x]])
+		pass
 
 	dic['success'] = True
-	dic['data'] = arr
+	dic['data'] = responseData
 	return HttpResponse(json.dumps(dic,encoding="UTF-8",ensure_ascii=False),content_type='application/json')
 	pass
 
