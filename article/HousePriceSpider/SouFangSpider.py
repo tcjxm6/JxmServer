@@ -20,7 +20,15 @@ def getHouseInfo():
 
 			url2 = url + str(x)
 			print '开始爬' + cityArr[y] + ':' + url2
-			response = requests.get(url2)
+
+			try:
+				response = requests.get(url2,timeout=60)
+				pass
+			except Exception as e:
+				print '获取超时'
+				continue
+
+			
 			response.encoding = 'gb18030'
 			html = response.text
 			if response.status_code:

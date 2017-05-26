@@ -129,7 +129,7 @@ def queryTop100(request):
 	if city != None:
 		models = models.filter(city_name=city).order_by('regionalism_name')
 		pass
-	
+	models = models.order_by('date')
 
 #[(page-1)*size : size * page]
 	houseNameArr = []
@@ -153,7 +153,6 @@ def queryTop100(request):
 			modelDic['house_rent'] = model.house_rent
 			modelDic['house_href'] = model.house_href
 			modelDic['source'] = model.source
-			modelDic['source2'] = None
 			houseNameArr.append(model.house_name)
 			pass
 		

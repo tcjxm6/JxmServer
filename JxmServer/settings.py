@@ -125,7 +125,7 @@ CELERYBEAT_SCHEDULE = {
 
     'timing': {
         'task': 'article.tasks.HouseSpider',
-        'schedule': crontab(minute=u'05', hour=u'0',),
+        'schedule': crontab(minute=u'24', hour=u'10',),
         # 'schedule': timedelta(seconds=3),
         'args': (2, 3)
     },
