@@ -4,6 +4,9 @@ import requests
 from .Model import RealEstateModels 
 import datetime
 from django.utils import timezone
+from . import Push
+
+
 Top_100 = 'Top100'
 
 
@@ -26,6 +29,7 @@ def getHouseInfo():
 				pass
 			except Exception as e:
 				print '获取超时'
+				Push.pushMessage('爬虫获取超时')
 				continue
 
 			
@@ -40,9 +44,10 @@ def getHouseInfo():
 			pass
 		pass
 		print '爬' + cityName[y] + '结束'
-
+		
 	pass
 	print '爬虫结束'
+	Push.pushMessage('爬虫成功')
 
 def houseSpider(url):
 
